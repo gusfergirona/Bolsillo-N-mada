@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bolsillo Nómada</title>
+    <link rel="stylesheet" type="text/css" href="./styles/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Bolsillo Nómada</h1>
+    </header>
+    
+    <section class="simulator">
+        <h2>Simulador de Planificación de Viajes</h2>
+        <label for="intereses">Selecciona tus intereses:</label>
+        <select id="intereses">
+            <option value="aventura">Aventura</option>
+            <option value="relajacion">Relajación</option>
+            <option value="cultura">Cultura</option>
+        </select>
+        <button onclick="mostrarRecomendaciones(document.getElementById('intereses').value)">Mostrar Recomendaciones</button>
+        <p id="recomendaciones"></p>
+    </section>
+    
+    <footer>
+        <p>&copy; 2023 Bolsillo Nómada.</p>
+    </footer>
+    
+    <script src="./script.js"></script>
+</body>
+</html>
