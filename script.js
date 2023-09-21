@@ -63,9 +63,6 @@ function gestionarPresupuestoViaje() {
   }
 }
 
-mostrarGastoPorCategoria();
-
-
 function mostrarGastoPorCategoria() {
   var listaGastos = "Gasto por categoría:\n";
   listaGastos += "Comida: $" + calcularGastoPorCategoria(gastosComida).toFixed(2) + "\n";
@@ -109,6 +106,9 @@ function obtenerNombreCategoria(numeroCategoria) {
 }
 
 gestionarPresupuestoViaje();
+
+mostrarGastoPorCategoria();
+
 
 function mostrarRecomendaciones(seleccionado) {
   var destinosRecomendados = destinos[seleccionado];
