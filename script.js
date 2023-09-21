@@ -60,11 +60,11 @@ function gestionarPresupuestoViaje() {
       var ahorroViaje = presupuestoViaje - gastoTotalViaje;
       alert("¡Excelente! Has logrado viajar dentro de tu presupuesto y has ahorrado $" + ahorroViaje.toFixed(2) + ".");
   
-  
-  calcularGastoTotal()
-  mostrarGastoPorCategoria();
   }
 }
+
+mostrarGastoPorCategoria();
+
 
 function mostrarGastoPorCategoria() {
   var listaGastos = "Gasto por categoría:\n";
