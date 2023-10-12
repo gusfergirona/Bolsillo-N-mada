@@ -1,252 +1,215 @@
-document.addEventListener("DOMContentLoaded", function () {
-    // Variables para almacenar los gastos por categoría
-    var gastosComida = [];
-    var gastosPasajes = [];
-    var gastosAlojamiento = [];
-
-    // Variable para almacenar el presupuesto del viaje
-    var presupuestoViaje = 0;
-
-    // Variable para almacenar el nombre del presupuesto
-    var nombrePresupuesto = "";
-
-    // Obtener elementos del DOM
-    var categoriaSelect = document.getElementById("categoriaSelect");
-    var montoInput = document.getElementById("montoInput");
-    var nombrePresupuestoInput = document.getElementById("nombrePresupuestoInput");
-    var registrarGastoBtn = document.getElementById("registrarGastoBtn");
-    var tablaGastos = document.getElementById("tablaGastos");
-    var seleccionarPresupuestoInput = document.getElementById("seleccionarPresupuestoInput");
-    var presupuestoInput = document.getElementById("presupuestoInput");
-    var barraProgreso = document.getElementById("barraProgreso");
-    var porcentajeTexto = document.getElementById("porcentajeTexto");
-    var gastoTotalElement = document.getElementById("gastoTotal");
-    var ahorroElement = document.getElementById("ahorro");
-    var gastoExcedidoElement = document.getElementById("gastoExcedido");
-
-    // Función para calcular el gasto total sumando todos los gastos por categoría
-    function calcularGastoTotal() {
-        var gastoTotal = 0;
-        gastoTotal += gastosComida.reduce(function (total, gasto) {
-            return total + gasto;
-        }, 0);
-        gastoTotal += gastosPasajes.reduce(function (total, gasto) {
-            return total + gasto;
-        }, 0);
-        gastoTotal += gastosAlojamiento.reduce(function (total, gasto) {
-            return total + gasto;
-        }, 0);
-        // Agrega más categorías según sea necesario
-
-        return gastoTotal;
+// Función para crear un objeto de presupuesto
+function crearPresupuesto(nombre, gastos, presupuestoTotal) {
+    return {
+      nombre: nombre,
+      id: Date.now(),
+      gastos: gastos,
+      presupuestoTotal: presupuestoTotal,
+    };
+  }
+  
+  // Función para guardar un presupuesto en el almacenamiento local
+  function guardarPresupuesto(presupuesto) {
+    let presupuestos = JSON.parse(localStorage.getItem('presupuestos')) || [];
+    const existingPresupuestoIndex = presupuestos.findIndex(p => p.id === presupuesto.id);
+    if (existingPresupuestoIndex !== -1) {
+      presupuestos[existingPresupuestoIndex] = presupuesto;
+    } else {
+      presupuestos.push(presupuesto);
     }
-
-    // Función para registrar un gasto en la categoría seleccionada
-    function registrarGasto() {
-        var categoria = parseInt(categoriaSelect.value);
-        var monto = parseFloat(montoInput.value);
-    
-        // Validar la categoría después de que el usuario la haya seleccionado
-        if (isNaN(categoria) || categoria === 0) {
-            alert("Seleccione una categoría válida.");
-            return; // Salir de la función si la categoría no es válida
-        }
-    
-        if (isNaN(monto) || monto < 0) {
-            alert("Ingrese un monto válido.");
-            return; // Salir de la función si el monto no es válido
-        }
-    
-        switch (categoria) {
-            case 1:
-                gastosComida.push(monto);
-                break;
-            case 2:
-                gastosPasajes.push(monto);
-                break;
-            case 3:
-                gastosAlojamiento.push(monto);
-                break;
-            // Agrega más categorías según sea necesario
-        }
-    
-        // Limpiar campos del formulario después de registrar el gasto
-        categoriaSelect.value = "0";
-        montoInput.value = "";
-    
-        actualizarTablaGastos();
-    
-        var gastoTotalViaje = calcularGastoTotal();
-        actualizarResultados(gastoTotalViaje); // Actualizar resultados después de registrar el gasto
+    localStorage.setItem('presupuestos', JSON.stringify(presupuestos));
+  }
+  
+  // Función para cargar presupuestos desde el almacenamiento local
+  function cargarPresupuestos() {
+    let presupuestos = JSON.parse(localStorage.getItem('presupuestos')) || [];
+    return presupuestos;
+  }
+  
+  
+  let gastoCount = 1; // Inicializar el contador de gastos
+  
+  // Función para agregar un campo para un nuevo gasto con nombre y valor
+  function agregarCampoGasto() {
+    gastoCount++;
+    const gastoContainer = document.getElementById('gastos-container');
+  
+    const nuevoGasto = document.createElement('div');
+    nuevoGasto.className = 'gasto';
+    nuevoGasto.innerHTML = `
+      <label for="nombre-gasto-${gastoCount}">Nombre del Gasto:</label>
+      <input type="text" id="nombre-gasto-${gastoCount}" required>
+      <label for="valor-gasto-${gastoCount}">Valor del Gasto:</label>
+      <input type="number" id="valor-gasto-${gastoCount}" required>
+    `;
+    gastoContainer.appendChild(nuevoGasto);
+  }
+  
+  // Manejador de clic para agregar gasto
+  document.getElementById('agregar-gasto').addEventListener('click', agregarCampoGasto);
+  
+  // Manejador de envío de formulario
+  document.getElementById('formulario-presupuesto').addEventListener('submit', function (event) {
+    event.preventDefault();
+  
+    const nombre = document.getElementById('nombre-presupuesto').value;
+    const gastos = [];
+    for (let i = 1; i <= gastoCount; i++) {
+      const nombreGasto = document.getElementById(`nombre-gasto-${i}`).value;
+      const valorGasto = parseFloat(document.getElementById(`valor-gasto-${i}`).value);
+      gastos.push({ nombre: nombreGasto, valor: valorGasto });
     }
-    
-
-    // Función para actualizar la tabla de gastos
-    function actualizarTablaGastos() {
-        var tbody = tablaGastos.querySelector("tbody");
-
-        // Limpiar filas existentes en el tbody
-        tbody.innerHTML = "";
-
-        // Crear una fila por cada categoría de gastos
-        agregarFilaGasto(tbody, "Comida", gastosComida);
-        agregarFilaGasto(tbody, "Pasajes", gastosPasajes);
-        agregarFilaGasto(tbody, "Alojamiento", gastosAlojamiento);
-        // Agrega más categorías según sea necesario
-    }
-
-    // Función para agregar una fila de gasto a la tabla
-    function agregarFilaGasto(tbody, categoria, gastos) {
-        var fila = document.createElement("tr");
-
-        var categoriaCell = document.createElement("td");
-        categoriaCell.textContent = categoria;
-
-        var montoTotal = gastos.reduce(function (total, gasto) {
-            return total + gasto;
-        }, 0).toFixed(2);
-
-        var montoCell = document.createElement("td");
-        montoCell.textContent = "$" + montoTotal;
-
-        fila.appendChild(categoriaCell);
-        fila.appendChild(montoCell);
-
-        tbody.appendChild(fila);
-    }
-
-    // Función para actualizar los resultados
-    function actualizarResultados(gastoTotalViaje) {
-        var porcentajeGastado = (gastoTotalViaje / presupuestoViaje) * 100;
-        barraProgreso.value = porcentajeGastado;
-        porcentajeTexto.textContent = "Hasta el momento llevas gastado un " + porcentajeGastado.toFixed(2) + "%" + " de tu presupuesto";
-
-        gastoTotalElement.textContent = "Gasto total del viaje: $" + gastoTotalViaje.toFixed(2);
-
-        if (gastoTotalViaje > presupuestoViaje) {
-            var excesoGastos = gastoTotalViaje - presupuestoViaje;
-            ahorroElement.textContent = "¡Cuidado! Tus gastos durante el viaje han excedido tu presupuesto por $" + excesoGastos.toFixed(2);
-            gastoExcedidoElement.textContent = "";
-        } else {
-            var ahorroViaje = presupuestoViaje - gastoTotalViaje;
-            ahorroElement.textContent = "¡Excelente! Has logrado viajar dentro de tu presupuesto y has ahorrado $" + ahorroViaje.toFixed(2);
-            gastoExcedidoElement.textContent = "";
+    const presupuestoTotal = parseFloat(document.getElementById('total-presupuesto').value);
+  
+    const nuevoPresupuesto = crearPresupuesto(nombre, gastos, presupuestoTotal);
+    guardarPresupuesto(nuevoPresupuesto);
+  
+    // Limpiar el formulario
+    document.getElementById('nombre-presupuesto').value = '';
+    document.getElementById('total-presupuesto').value = '';
+    gastoCount = 1;
+    const gastoContainer = document.getElementById('gastos-container');
+    gastoContainer.innerHTML = '';
+    agregarCampoGasto();
+  
+    // Actualizar el selector de presupuestos
+    const presupuestos = cargarPresupuestos();
+    mostrarPresupuestosEnSelector(presupuestos);
+  });
+  
+  // Manejador de selección de presupuesto
+  document.getElementById('selector-presupuestos').addEventListener('change', function () {
+    const selectedId = parseInt(this.value);
+    const presupuestos = cargarPresupuestos();
+    const selectedPresupuesto = presupuestos.find((presupuesto) => presupuesto.id === selectedId);
+  
+    mostrarDetallesPresupuesto(selectedPresupuesto);
+  });
+  
+  // Función para mostrar los detalles de un presupuesto seleccionado
+  function mostrarDetallesPresupuesto(presupuesto) {
+    const detallesPresupuesto = document.getElementById('detalles-presupuesto');
+  
+    detallesPresupuesto.innerHTML = ''; // Limpiar detalles previos
+  
+    if (presupuesto) {
+      detallesPresupuesto.innerHTML = `
+        <h3>Nombre del Presupuesto: 
+          <input type="text" id="nombre-presupuesto-edit" value="${presupuesto.nombre}" required>
+        </h3>
+        <p>Presupuesto Total: 
+          <input type="number" id="presupuesto-total-edit" value="${presupuesto.presupuestoTotal}" required>
+        </p>
+        <h4>Gastos:</h4>
+        <ul id="lista-gastos">
+          ${presupuesto.gastos.map((gasto, index) => `
+            <li>
+              <input type="text" id="detalle-nombre-gasto-${index}" value="${gasto.nombre}" required>
+              <input type="number" id="detalle-valor-gasto-${index}" value="${gasto.valor}" required>
+            </li>
+          `).join('')}
+        </ul>
+        <button id="agregar-gasto-detalle">Agregar Gasto</button>
+        <button id="guardar-modificacion">Guardar Modificación</button>
+        <button id="eliminar-presupuesto">Eliminar Presupuesto</button>
+      `;
+  
+      document.getElementById('agregar-gasto-detalle').addEventListener('click', function () {
+        agregarCampoGastoDetalle();
+      });
+  
+      document.getElementById('guardar-modificacion').addEventListener('click', function () {
+        const nuevoNombre = document.getElementById('nombre-presupuesto-edit').value;
+        const nuevoPresupuestoTotal = parseFloat(document.getElementById('presupuesto-total-edit').value);
+        const gastos = [];
+        const listaGastos = document.getElementById('lista-gastos').getElementsByTagName('li');
+        for (let i = 0; i < listaGastos.length; i++) {
+          const nombreGasto = document.getElementById(`detalle-nombre-gasto-${i}`).value;
+          const valorGasto = parseFloat(document.getElementById(`detalle-valor-gasto-${i}`).value);
+          gastos.push({ nombre: nombreGasto, valor: valorGasto });
         }
-
-        // Guardar el presupuesto completo, incluyendo los gastos
-        guardarPresupuesto(nombrePresupuesto);
-    }
-
-    // Evento al presionar el botón "Registrar Gasto"
-    registrarGastoBtn.addEventListener("click", registrarGasto);
-
-    // Evento al cargar la página para obtener el presupuesto
-    document.getElementById("guardarPresupuestoBtn").addEventListener("click", function () {
-        presupuestoViaje = parseFloat(presupuestoInput.value);
-        nombrePresupuesto = nombrePresupuestoInput.value;
-
-        if (!isNaN(presupuestoViaje) && presupuestoViaje >= 0 && nombrePresupuesto) {
-            // Restablecer los campos de entrada de gastos
-            reiniciarCamposGastos();
-
-            localStorage.setItem("presupuestoViaje", presupuestoViaje);
-            guardarPresupuesto(nombrePresupuesto);
-
-            // Agregar el nuevo presupuesto a la lista de selección
-            var option = document.createElement("option");
-            option.value = nombrePresupuesto;
-            option.textContent = nombrePresupuesto;
-            seleccionarPresupuestoInput.appendChild(option);
-
-            var gastoTotalViaje = calcularGastoTotal();
-            actualizarResultados(gastoTotalViaje);
-            actualizarTablaGastos();
-        } else {
-            alert("Ingrese un presupuesto válido y un nombre de presupuesto para el viaje.");
+  
+        // Actualizar el presupuesto con las modificaciones
+        presupuesto.nombre = nuevoNombre;
+        presupuesto.presupuestoTotal = nuevoPresupuestoTotal;
+        presupuesto.gastos = gastos;
+  
+        // Volver a guardar el presupuesto modificado
+        guardarPresupuesto(presupuesto);
+  
+        // Actualizar el selector de presupuestos
+        const presupuestos = cargarPresupuestos();
+        mostrarPresupuestosEnSelector(presupuestos);
+  
+        // Mostrar los detalles actualizados del presupuesto
+        mostrarDetallesPresupuesto(presupuesto);
+      });
+  
+      document.getElementById('eliminar-presupuesto').addEventListener('click', function () {
+        if (confirm('¿Seguro que deseas eliminar este presupuesto?')) {
+          eliminarPresupuesto(presupuesto.id);
+          // Limpiar la sección de detalles después de eliminar el presupuesto
+          detallesPresupuesto.innerHTML = 'Presupuesto eliminado';
         }
+      });
+    } else {
+      detallesPresupuesto.innerHTML = 'Selecciona un presupuesto para ver los detalles.';
+    }
+  }
+  
+  // Función para agregar un nuevo campo de gasto en "Detalles del Presupuesto"
+  function agregarCampoGastoDetalle() {
+    const listaGastos = document.getElementById('lista-gastos');
+    const nuevoCampo = document.createElement('li');
+    nuevoCampo.innerHTML = `
+      <input type="text" id="detalle-nombre-gasto-${listaGastos.children.length}" placeholder="Nombre del Gasto" required>
+      <input type="number" id="detalle-valor-gasto-${listaGastos.children.length}" placeholder="Valor del Gasto" required>
+    `;
+    listaGastos.appendChild(nuevoCampo);
+  }
+  
+  // Función para mostrar los presupuestos en un selector HTML
+  function mostrarPresupuestosEnSelector(presupuestos) {
+    const selectorPresupuestos = document.getElementById('selector-presupuestos');
+  
+    selectorPresupuestos.innerHTML = ''; // Limpiar opciones existentes
+  
+    presupuestos.forEach((presupuesto) => {
+      const option = document.createElement('option');
+      option.value = presupuesto.id;
+      option.text = presupuesto.nombre;
+      selectorPresupuestos.appendChild(option);
     });
-
-    // Evento al seleccionar un presupuesto guardado
-    seleccionarPresupuestoInput.addEventListener("change", function () {
-        nombrePresupuesto = seleccionarPresupuestoInput.value;
-        cargarPresupuesto(nombrePresupuesto);
-        actualizarTablaGastos();
+  
+    // Agrega un evento de cambio para manejar la selección del presupuesto
+    selectorPresupuestos.addEventListener('change', function () {
+      const selectedId = parseInt(this.value);
+      const selectedPresupuesto = presupuestos.find((presupuesto) => presupuesto.id === selectedId);
+      mostrarDetallesPresupuesto(selectedPresupuesto);
     });
-
-    // Función para guardar los datos del presupuesto actual en localStorage
-    function guardarPresupuesto(nombrePresupuesto) {
-        // Guardar tanto el presupuesto como los gastos en el mismo objeto
-        var presupuesto = {
-            nombre: nombrePresupuesto,
-            presupuestoViaje: presupuestoViaje,
-            gastos: {
-                comida: gastosComida,
-                pasajes: gastosPasajes,
-                alojamiento: gastosAlojamiento,
-                // Agrega más categorías según sea necesario
-            }
-        };
-        localStorage.setItem(nombrePresupuesto, JSON.stringify(presupuesto));
+  
+    // Dispara el evento de cambio para mostrar los detalles del primer presupuesto (si existe)
+    if (presupuestos.length > 0) {
+      selectorPresupuestos.dispatchEvent(new Event('change'));
     }
-
-    // Función para cargar los datos de un presupuesto desde localStorage
-function cargarPresupuesto(nombrePresupuesto) {
-    var presupuestoJSON = localStorage.getItem(nombrePresupuesto);
-    if (presupuestoJSON) {
-        var presupuesto = JSON.parse(presupuestoJSON);
-        presupuestoViaje = presupuesto.presupuestoViaje;
-
-        // Limpiar los arrays de gastos antes de cargar el nuevo presupuesto
-        gastosComida = [];
-        gastosPasajes = [];
-        gastosAlojamiento = [];
-        // Agrega más categorías según sea necesario
-
-        // Cargar tanto el presupuesto como los gastos desde el objeto del presupuesto
-        cargarGastosDesdePresupuesto(presupuesto.gastos);
-
-        presupuestoInput.value = presupuestoViaje;
-        nombrePresupuestoInput.value = nombrePresupuesto; // Establecer el nombre del presupuesto en el input
-
-        var gastoTotalViaje = calcularGastoTotal();
-        actualizarResultados(gastoTotalViaje);
+  }
+  
+  // Función para eliminar un presupuesto del almacenamiento local
+  function eliminarPresupuesto(id) {
+    const presupuestos = cargarPresupuestos();
+    const indicePresupuesto = presupuestos.findIndex((presupuesto) => presupuesto.id === id);
+    if (indicePresupuesto !== -1) {
+      presupuestos.splice(indicePresupuesto, 1);
+      localStorage.setItem('presupuestos', JSON.stringify(presupuestos));
+  
+      // Limpia la sección de detalles del presupuesto
+      const detallesPresupuesto = document.getElementById('detalles-presupuesto');
+      detallesPresupuesto.innerHTML = 'Presupuesto eliminado';
     }
-}
-
-
-    // Función para cargar los gastos de un presupuesto
-    function cargarGastosDesdePresupuesto(gastos) {
-        if (gastos) {
-            gastosComida = gastos.comida || [];
-            gastosPasajes = gastos.pasajes || [];
-            gastosAlojamiento = gastos.alojamiento || [];
-            // Agrega más categorías según sea necesario
-            actualizarTablaGastos();
-        }
-    }
-
-    // Función para reiniciar los campos de entrada de gastos
-    function reiniciarCamposGastos() {
-        categoriaSelect.value = "0";
-        montoInput.value = "";
-    }
-
-    // Restablecer los campos de entrada de gastos al cargar la página
-    reiniciarCamposGastos();
-    
-
-    // Cargar la lista de presupuestos disponibles al cargar la página
-    for (var i = 0; i < localStorage.length; i++) {
-        var key = localStorage.key(i);
-        if (!isNaN(parseFloat(localStorage.getItem(key)))) {
-            // Es un presupuesto válido
-            var option = document.createElement("option");
-            option.value = key;
-            option.textContent = key;
-            seleccionarPresupuestoInput.appendChild(option);
-        }
-    }
-
-    // Cargar el presupuesto inicial si está presente en localStorage
-    cargarPresupuesto(localStorage.getItem("presupuestoSeleccionado"));
-});
+  }
+  
+  // Cargar y mostrar los presupuestos al cargar la página
+  window.addEventListener('load', function () {
+    const presupuestos = cargarPresupuestos();
+    mostrarPresupuestosEnSelector(presupuestos);
+  });

@@ -11,65 +11,43 @@
         <h1>Bolsillo Nómada</h1>
     </header>
     
-    <div>
-        <label for="presupuestoInput">Presupuesto del Viaje:</label>
-        <input type="number" id="presupuestoInput" placeholder="Ingrese su presupuesto">
-    </div>
-    <div>
-        <label for="nombrePresupuestoInput">Nombre del Presupuesto:</label>
-        <input type="text" id="nombrePresupuestoInput" placeholder="Ingrese el nombre del presupuesto">
-    </div>
-    <button id="guardarPresupuestoBtn">Guardar Presupuesto</button>
-    
+    <h1>Calculadora de Viaje</h1>
+	
+	<form id="formulario-presupuesto">
+        <label for="nombre-presupuesto">Nombre del Presupuesto:</label>
+        <input type="text" id="nombre-presupuesto" required>
+        <br>
 
-    <!-- Selector para cargar un presupuesto guardado -->
-    <div>
-        <label for="seleccionarPresupuestoInput">Seleccionar presupuesto guardado:</label>
-        <select id="seleccionarPresupuestoInput">
-            <!-- Opciones se agregarán dinámicamente con JavaScript -->
-        </select>
-    </div>
+        <div id="gastos-container">
+            <h2>Gastos</h2>
+            <div class="gasto">
+                <label for="nombre-gasto-1">Nombre del Gasto:</label>
+                <input type="text" id="nombre-gasto-1" required>
+                <label for="valor-gasto-1">Valor del Gasto:</label>
+                <input type="number" id="valor-gasto-1" required>
+            </div>
+        </div>
 
-    <!-- Barra de progreso y resultados -->
-    <div>
-        <progress id="barraProgreso" value="0" max="100"></progress>
-        <p id="porcentajeTexto">Hasta el momento llevas gastado un 0.00% de tu presupuesto</p>
-        <p id="gastoTotal">Gasto total del viaje: $0.00</p>
-        <p id="ahorro"></p>
-        <p id="gastoExcedido"></p>
-    </div>
+        <button type="button" id="agregar-gasto">Agregar Gasto</button>
+        <br>
 
-    <!-- Formulario para registrar gastos -->
-    <h2>Registrar Gasto</h2>
-    <div>
-        <label for="categoriaSelect">Categoría:</label>
-        <select id="categoriaSelect">
-            <option value="0">Seleccione una categoría</option>
-            <option value="1">Comida</option>
-            <option value="2">Pasajes</option>
-            <option value="3">Alojamiento</option>
-            <!-- Agrega más categorías según sea necesario -->
-        </select>
-    </div>
-    <div>
-        <label for="montoInput">Monto:</label>
-        <input type="number" id="montoInput" placeholder="Ingrese el monto del gasto">
-    </div>
-    <button id="registrarGastoBtn">Registrar Gasto</button>
+        <label for="total-presupuesto">Presupuesto Total:</label>
+        <input type="number" id="total-presupuesto" required>
+        <br>
 
-    <!-- Tabla para mostrar los gastos -->
-    <h2>Gastos</h2>
-    <table id="tablaGastos">
-        <thead>
-            <tr>
-                <th>Categoría</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Filas de gastos se agregarán dinámicamente con JavaScript -->
-        </tbody>
-    </table>
+        <button id="crear-presupuesto">Crear Presupuesto</button>
+    </form>
+
+    <h2>Seleccionar un Presupuesto:</h2>
+    <select id="selector-presupuestos">
+        <!-- Opciones de presupuestos se agregan aquí mediante JavaScript -->
+    </select>
+
+    <h2>Detalles del Presupuesto:</h2>
+    <div id="detalles-presupuesto">
+        <!-- La información del presupuesto se mostrará aquí mediante JavaScript -->
+		<button id="guardar-modificacion">Guardar Modificación</button>
+    </div>
     
     <footer>
         <p>&copy; 2023 Bolsillo Nómada.</p>
