@@ -1,99 +1,123 @@
-// Función para crear un objeto de presupuesto
-function crearPresupuesto(nombre, gastos, presupuestoTotal) {
-  return {
-    nombre: nombre,
-    id: Date.now(),
-    gastos: gastos,
-    presupuestoTotal: presupuestoTotal,
-  };
+class Presupuesto {
+  constructor(nombre, gastos, presupuestoTotal) {
+    this.nombre = nombre;
+    this.id = Date.now();
+    this.gastos = gastos;
+    this.presupuestoTotal = presupuestoTotal;
+  }
 }
 
-// Función para guardar un presupuesto en el almacenamiento local
 function guardarPresupuesto(presupuesto) {
   let presupuestos = JSON.parse(localStorage.getItem('presupuestos')) || [];
 
-  // Busca si ya existe un presupuesto con el mismo nombre
   const presupuestoExistente = buscarPresupuestoPorNombre(presupuesto.nombre, presupuestos);
 
   if (presupuestoExistente) {
-    // Si existe, sobrescribe el presupuesto
     presupuestos = presupuestos.map((p) => (p.id === presupuestoExistente.id ? presupuesto : p));
   } else {
-    // Si no existe, agrega el nuevo presupuesto
     presupuestos.push(presupuesto);
   }
 
   localStorage.setItem('presupuestos', JSON.stringify(presupuestos));
 }
 
-// Función para buscar un presupuesto por nombre en la lista de presupuestos
 function buscarPresupuestoPorNombre(nombre, presupuestos) {
   return presupuestos.find((presupuesto) => presupuesto.nombre === nombre);
 }
 
-// Función para cargar presupuestos desde el almacenamiento local
 function cargarPresupuestos() {
   let presupuestos = JSON.parse(localStorage.getItem('presupuestos')) || [];
   return presupuestos;
 }
 
-let gastoCount = 1; // Inicializar el contador de gastos
-
-// Función para agregar un campo para un nuevo gasto con nombre y valor
 function agregarCampoGasto() {
-  gastoCount++;
   const gastoContainer = document.getElementById('gastos-container');
 
   const nuevoGasto = document.createElement('div');
-  nuevoGasto.className = 'gasto';
+  const uniqueId = Date.now();
+  nuevoGasto.className = 'gasto form-group row';
   nuevoGasto.innerHTML = `
-    <label for="nombre-gasto-${gastoCount}">Nombre del Gasto:</label>
-    <input type="text" id="nombre-gasto-${gastoCount}" required>
-    <label for="valor-gasto-${gastoCount}">Valor del Gasto:</label>
-    <input type="number" id="valor-gasto-${gastoCount}" required>
+    <label for="nombre-gasto-${uniqueId}" class="col-sm-3 col-form-label">Nombre del Gasto:</label>
+    <div class="col-sm-9">
+      <input type="text" id="nombre-gasto-${uniqueId}" name="nombre-gasto[]" class="form-control" required>
+    </div>
+    <label for="valor-gasto-${uniqueId}" class="col-sm-3 col-form-label">Valor del Gasto:</label>
+    <div class="col-sm-9">
+      <input type="number" id="valor-gasto-${uniqueId}" name="valor-gasto[]" class="form-control" required>
+    </div>
   `;
   gastoContainer.appendChild(nuevoGasto);
 }
 
-// Función para agregar un nuevo campo de gasto en "Detalles del Presupuesto"
 function agregarCampoGastoDetalle() {
   const listaGastos = document.getElementById('lista-gastos');
+  const uniqueId = Date.now();
+
   const nuevoCampo = document.createElement('li');
   nuevoCampo.innerHTML = `
+    <label for="nombre-gasto-${uniqueId}">Nombre del Gasto:</label>
     <span class="nombre-gasto" contenteditable="true">Nombre del Gasto</span>
+    <label for="valor-gasto-${uniqueId}">Valor del Gasto:</label>
     <span class="valor-gasto" contenteditable="true">Valor del Gasto</span>
   `;
   listaGastos.appendChild(nuevoCampo);
 }
 
-// Función para mostrar los detalles de un presupuesto seleccionado
+function calcularEstadoPresupuesto(presupuesto) {
+  if (!presupuesto || !presupuesto.gastos) {
+    return 'No se ha seleccionado un presupuesto válido.';
+  }
+
+  const gastosTotales = presupuesto.gastos.reduce((total, gasto) => total + gasto.valor, 0);
+  const diferencia = presupuesto.presupuestoTotal - gastosTotales;
+
+  if (diferencia > 0) {
+    return `Dentro del presupuesto. Has ahorrado $${diferencia.toFixed(2)}`;
+  } else if (diferencia < 0) {
+    return `Has excedido el presupuesto por $${Math.abs(diferencia).toFixed(2)}`;
+  } else {
+    return `Has utilizado todo el presupuesto.`;
+  }
+}
+
+function mostrarEstadoPresupuesto(presupuesto) {
+  const estadoPresupuesto = document.getElementById('estado-presupuesto');
+  estadoPresupuesto.textContent = calcularEstadoPresupuesto(presupuesto);
+}
+
 function mostrarDetallesPresupuesto(presupuesto) {
   const detallesPresupuesto = document.getElementById('detalles-presupuesto');
 
-  detallesPresupuesto.innerHTML = ''; // Limpiar detalles previos
+  detallesPresupuesto.innerHTML = '';
 
   if (presupuesto) {
     detallesPresupuesto.innerHTML = `
-      <h3>Nombre del Presupuesto: 
+      <h3>Nombre del Presupuesto:
         <span class="nombre-gasto" contenteditable="true">${presupuesto.nombre}</span>
       </h3>
-      <p>Presupuesto Total: 
+      <p>Presupuesto Total:
         <span class="valor-gasto" contenteditable="true">${presupuesto.presupuestoTotal}</span>
       </p>
       <h4>Gastos:</h4>
       <ul id="lista-gastos">
         ${presupuesto.gastos.map((gasto, index) => `
           <li>
-            Nombre del Gasto: <span class="nombre-gasto" contenteditable="true">${gasto.nombre}</span>
-            <br>
-            Valor del Gasto: <span class="valor-gasto" contenteditable="true">${gasto.valor}</span>
+            <label for="nombre-gasto-${index}-${presupuesto.id}">Nombre del Gasto:</label>
+            <span class="nombre-gasto" contenteditable="true">${gasto.nombre}</span>
+            <label for="valor-gasto-${index}-${presupuesto.id}">Valor del Gasto:</label>
+            <span class="valor-gasto" contenteditable="true">${gasto.valor}</span>
           </li>
         `).join('')}
       </ul>
-      <button id="agregar-gasto-detalle">Agregar Gasto</button>
-      <button id="guardar-modificacion">Guardar Modificación</button>
-      <button id="eliminar-presupuesto">Eliminar Presupuesto</button>
+      <button id="agregar-gasto-detalle" class="btn btn-primary">Agregar Gasto</button>
+      <button id="guardar-modificacion" class="btn btn-success">Guardar Modificación</button>
     `;
+
+    const eliminarPresupuestoButton = document.createElement('button');
+    eliminarPresupuestoButton.id = 'eliminar-presupuesto';
+    eliminarPresupuestoButton.textContent = 'Eliminar Presupuesto';
+    eliminarPresupuestoButton.classList.add('btn', 'btn-danger');
+    detallesPresupuesto.appendChild(eliminarPresupuestoButton);
 
     document.getElementById('agregar-gasto-detalle').addEventListener('click', function () {
       agregarCampoGastoDetalle();
@@ -103,7 +127,6 @@ function mostrarDetallesPresupuesto(presupuesto) {
       const nuevoNombre = document.querySelector('.nombre-gasto').textContent;
       const nuevoPresupuestoTotal = parseFloat(document.querySelector('.valor-gasto').textContent);
 
-      // Obtén los gastos del documento y actualiza el objeto presupuesto
       const listaGastos = document.getElementById('lista-gastos').getElementsByTagName('li');
       const gastos = [];
       for (let i = 0; i < listaGastos.length; i++) {
@@ -116,20 +139,26 @@ function mostrarDetallesPresupuesto(presupuesto) {
       presupuesto.presupuestoTotal = nuevoPresupuestoTotal;
       presupuesto.gastos = gastos;
 
-      // Vuelve a guardar el presupuesto modificado
       guardarPresupuesto(presupuesto);
 
-      // Actualiza el selector de presupuestos
       const presupuestos = cargarPresupuestos();
       mostrarPresupuestosEnSelector(presupuestos);
 
-      // Muestra los detalles actualizados del presupuesto
-      mostrarDetallesPresupuesto(presupuesto);
+      mostrarEstadoPresupuesto(presupuesto);
     });
 
-    document.getElementById('eliminar-presupuesto').addEventListener('click', function () {
-      if (confirm('¿Seguro que deseas eliminar este presupuesto?')) {
+    eliminarPresupuestoButton.addEventListener('click', async function () {
+      if (await Swal.fire({
+        title: '¿Seguro que deseas eliminar este presupuesto?',
+        text: 'No podrás deshacer esta acción',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => result.isConfirmed)) {
         eliminarPresupuesto(presupuesto.id);
+
+        Swal.fire('Presupuesto Eliminado', 'El presupuesto ha sido eliminado con éxito.', 'success');
       }
     });
   } else {
@@ -137,11 +166,10 @@ function mostrarDetallesPresupuesto(presupuesto) {
   }
 }
 
-// Función para mostrar los presupuestos en un selector HTML
 function mostrarPresupuestosEnSelector(presupuestos) {
   const selectorPresupuestos = document.getElementById('selector-presupuestos');
 
-  selectorPresupuestos.innerHTML = ''; // Limpiar opciones existentes
+  selectorPresupuestos.innerHTML = '';
 
   presupuestos.forEach((presupuesto) => {
     const option = document.createElement('option');
@@ -150,20 +178,18 @@ function mostrarPresupuestosEnSelector(presupuestos) {
     selectorPresupuestos.appendChild(option);
   });
 
-  // Agrega un evento de cambio para manejar la selección del presupuesto
   selectorPresupuestos.addEventListener('change', function () {
     const selectedId = parseInt(this.value);
     const selectedPresupuesto = presupuestos.find((presupuesto) => presupuesto.id === selectedId);
     mostrarDetallesPresupuesto(selectedPresupuesto);
+    mostrarEstadoPresupuesto(selectedPresupuesto);
   });
 
-  // Dispara el evento de cambio para mostrar los detalles del primer presupuesto (si existe)
   if (presupuestos.length > 0) {
     selectorPresupuestos.dispatchEvent(new Event('change'));
   }
 }
 
-// Función para eliminar un presupuesto del almacenamiento local
 function eliminarPresupuesto(id) {
   const presupuestos = cargarPresupuestos();
   const indicePresupuesto = presupuestos.findIndex((presupuesto) => presupuesto.id === id);
@@ -171,32 +197,26 @@ function eliminarPresupuesto(id) {
     presupuestos.splice(indicePresupuesto, 1);
     localStorage.setItem('presupuestos', JSON.stringify(presupuestos));
 
-    // Actualiza el selector de presupuestos
     mostrarPresupuestosEnSelector(presupuestos);
 
-    // Limpia la sección de detalles del presupuesto
     const detallesPresupuesto = document.getElementById('detalles-presupuesto');
     detallesPresupuesto.innerHTML = 'Presupuesto eliminado';
 
-    // Elimina la opción del selector
     const selectorPresupuestos = document.getElementById('selector-presupuestos');
     const optionToDelete = selectorPresupuestos.querySelector(`[value="${id}"]`);
     if (optionToDelete) {
       selectorPresupuestos.removeChild(optionToDelete);
     }
 
-    // Añade el siguiente bloque de código para forzar la selección del primer presupuesto (si existe)
     if (presupuestos.length > 0) {
       selectorPresupuestos.value = presupuestos[0].id;
       selectorPresupuestos.dispatchEvent(new Event('change'));
     } else {
-      selectorPresupuestos.innerHTML = ''; // Limpia el selector si no hay presupuestos
+      selectorPresupuestos.innerHTML = '';
     }
   }
 }
 
-
-// Cargar y mostrar los presupuestos al cargar la página
 document.addEventListener('DOMContentLoaded', function () {
   const presupuestos = cargarPresupuestos();
   mostrarPresupuestosEnSelector(presupuestos);
@@ -209,7 +229,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const presupuestoTotal = parseFloat(document.getElementById('total-presupuesto').value);
     const gastos = [];
 
-    // Recopilar los datos de gastos en el formulario
     const gastoInputs = document.querySelectorAll('.gasto input[type="text"]');
     const valorInputs = document.querySelectorAll('.gasto input[type="number"]');
 
@@ -220,21 +239,99 @@ document.addEventListener('DOMContentLoaded', function () {
       gastos.push({ nombre: nombreGasto, valor: valorGasto });
     });
 
-    const nuevoPresupuesto = crearPresupuesto(nombre, gastos, presupuestoTotal);
+    const nuevoPresupuesto = new Presupuesto(nombre, gastos, presupuestoTotal);
     guardarPresupuesto(nuevoPresupuesto);
 
-    // Restablecer el contador de gastos
-    gastoCount = 1;
-
-    // Limpiar el formulario
     document.getElementById('nombre-presupuesto').value = '';
     document.getElementById('total-presupuesto').value = '';
     const gastoContainer = document.getElementById('gastos-container');
     gastoContainer.innerHTML = '';
     agregarCampoGasto();
 
-    // Actualizar el selector de presupuestos
     const presupuestos = cargarPresupuestos();
     mostrarPresupuestosEnSelector(presupuestos);
+
+    mostrarEstadoPresupuesto(nuevoPresupuesto);
+
+    Swal.fire('Presupuesto Creado', 'El nuevo presupuesto ha sido creado con éxito.', 'success');
+  });
+
+  document.getElementById('mostrar-destinos').addEventListener('click', function () {
+    cargarYMostrarDestinos();
   });
 });
+
+async function cargarYMostrarDestinos() {
+  try {
+    const response = await fetch('destinos.json');
+    if (!response.ok) {
+      throw new Error('No se pudo cargar el archivo de destinos.');
+    }
+
+    const destinos = await response.json();
+
+    const selectorPresupuestos = document.getElementById('selector-presupuestos');
+    const selectedId = parseInt(selectorPresupuestos.value);
+    const presupuestos = cargarPresupuestos();
+    const presupuesto = presupuestos.find((p) => p.id === selectedId);
+
+    if (!presupuesto) {
+      Swal.fire('Error', 'Por favor, selecciona un presupuesto antes de buscar destinos.', 'error');
+      return;
+    }
+
+    const destinosAdecuados = destinos.filter((destino) => destino.valor_estimado <= presupuesto.presupuestoTotal);
+
+    const destinosAMostrar = destinosAdecuados.slice(0, 3);
+
+    const listaDestinos = document.getElementById('lista-destinos');
+    listaDestinos.innerHTML = '';
+
+    destinosAMostrar.forEach((destino) => {
+      const destinoCard = document.createElement('div');
+      destinoCard.className = 'card';
+    
+      const carouselId = `carousel-${destino.nombre}-${Date.now()}`;
+      destinoCard.innerHTML = `
+  <div id="${carouselId}" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+      ${destino.imagenes.slice(0, 3).map((imagen, index) => `
+        <div class="carousel-item ${index === 0 ? 'active' : ''}">
+          <img src="${imagen}" class="d-block" style="width: 300px; height: 200px;" alt="${destino.nombre} - Imagen ${index + 1}">
+        </div>
+      `).join('')}
+    </div>
+    <a class="carousel-control-prev" href="#${carouselId}" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Anterior</span>
+    </a>
+    <a class="carousel-control-next" href="#${carouselId}" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" ariahidden="true"></span>
+      <span class="sr-only">Siguiente</span>
+    </a>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">${destino.nombre}</h5>
+    <p class="card-text">${destino.datos_interes}</p>
+    <p class="card-text">Valor Estimado: $${destino.valor_estimado.toFixed(2)}</p>
+  </div>
+`;
+    
+      listaDestinos.appendChild(destinoCard);
+    });
+    
+    // Inicializa los carruseles
+    destinosAMostrar.forEach((destino) => {
+      const carouselId = `carousel-${destino.nombre}-${Date.now()}`;
+      $(`#${carouselId}`).carousel(); // Activa el carrusel
+    });
+
+    if (destinosAMostrar.length === 0) {
+      Swal.fire('Destinos no encontrados', 'No hay destinos adecuados para tu presupuesto.', 'info');
+    }
+  } catch (error) {
+    console.error(error);
+    Swal.fire('Error', 'Hubo un error al cargar los destinos.', 'error');
+  }
+}
+

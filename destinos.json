@@ -1,0 +1,66 @@
+[
+    {
+      "nombre": "París, Francia",
+      "valor_estimado": 1200,
+      "actividades": ["Visita a la Torre Eiffel", "Tour por el Louvre", "Paseo en barco por el Sena"],
+      "datos_interes": "Explora la belleza y la historia de la Ciudad de la Luz.",
+      "imagenes": ["multimedia/paris1.jpg"]
+    },
+    {
+      "nombre": "Kioto, Japón",
+      "valor_estimado": 1500,
+      "actividades": ["Visita a templos antiguos", "Ceremonia del té", "Paseo en jardines de bambú"],
+      "datos_interes": "Descubre la cultura tradicional japonesa en Kioto.",
+      "imagenes": ["multimedia/kioto1.jpg", "multimedia/kioto2.jpg", "multimedia/kioto3.jpg"]
+    },
+    {
+      "nombre": "Cancún, México",
+      "valor_estimado": 1000,
+      "actividades": ["Snorkel en arrecifes", "Visita a las ruinas de Tulum", "Relax en playas de arena blanca"],
+      "datos_interes": "Disfruta del sol y la diversión en las costas del Caribe mexicano.",
+      "imagenes": ["multimedia/cancun1.jpg", "multimedia/cancun2.jpg", "multimedia/cancun3.jpg"]
+    },
+    {
+      "nombre": "Roma, Italia",
+      "valor_estimado": 1300,
+      "actividades": ["Visita al Coliseo", "Exploración de la Ciudad del Vaticano", "Degustación de pizza auténtica"],
+      "datos_interes": "Sumérgete en la historia y la gastronomía italianas en Roma.",
+      "imagenes": ["multimedia/roma1.jpg", "multimedia/roma2.jpg", "multimedia/roma3.jpg"]
+    },
+    {
+      "nombre": "Nueva York, EE. UU.",
+      "valor_estimado": 1600,
+      "actividades": ["Exploración de Times Square", "Visita a la Estatua de la Libertad", "Paseo por Central Park"],
+      "datos_interes": "Descubre la energía de la Gran Manzana en Nueva York.",
+      "imagenes": ["multimedia/nyc1.jpg", "multimedia/nyc2.jpg", "multimedia/nyc3.jpg"]
+    },
+    {
+      "nombre": "Sydney, Australia",
+      "valor_estimado": 1800,
+      "actividades": ["Visita a la Ópera de Sídney", "Excursión al puente de la Bahía", "Paseo en la playa de Bondi"],
+      "datos_interes": "Explora la belleza y la vida marina de Australia en Sydney.",
+      "imagenes": ["multimedia/sydney1.jpg", "multimedia/sydney2.jpg", "multimedia/sydney3.jpg"]
+    },
+    {
+      "nombre": "Machu Picchu, Perú",
+      "valor_estimado": 1100,
+      "actividades": ["Senderismo a la Ciudad Perdida de los Incas", "Exploración de ruinas antiguas", "Fotografía de paisajes impresionantes"],
+      "datos_interes": "Viaja en el tiempo y descubre la maravilla de Machu Picchu en Perú.",
+      "imagenes": ["multimedia/machupicchu1.jpg", "multimedia/machupicchu2.jpg", "multimedia/machupicchu3.jpg"]
+    },
+    {
+      "nombre": "Santorini, Grecia",
+      "valor_estimado": 1400,
+      "actividades": ["Atardecer en Oia", "Navegación en el mar Egeo", "Visita a las playas de arena roja"],
+      "datos_interes": "Disfruta de las vistas panorámicas y la arquitectura única en Santorini.",
+      "imagenes": ["multimedia/santorini1.jpg", "multimedia/santorini2.jpg", "multimedia/santorini3.jpg"]
+    },
+    {
+      "nombre": "Río de Janeiro, Brasil",
+      "valor_estimado": 950,
+      "actividades": ["Cristo Redentor", "Samba en el Carnaval", "Playas de Copacabana e Ipanema"],
+      "datos_interes": "Sumérgete en la cultura y la diversión de Río de Janeiro en Brasil.",
+      "imagenes": ["multimedia/rio1.jpg", "multimedia/rio2.jpg", "multimedia/rio3.jpg"]
+    }
+  ]
+  

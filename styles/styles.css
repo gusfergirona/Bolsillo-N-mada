@@ -1,98 +1,98 @@
-/* styles.css */
+/* Estilo general para el cuerpo de la página */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+  background-color: #f8f8f8; /* Fondo gris claro */
+  font-family: Arial, sans-serif;
 }
 
+/* Estilo para el encabezado */
 header {
-    background-color: #333;
-    color: #fff;
-    padding: 10px 0;
-    text-align: center;
+  background-color: #ff9800; /* Naranja */
+  color: #fff; /* Texto blanco */
+  padding: 10px;
+  text-align: center;
 }
 
-.simulator {
-    text-align: center;
-    padding: 20px;
+/* Estilo para los títulos */
+h1, h2, h3, h4, h5, h6 {
+  color: #333; /* Texto gris oscuro */
 }
 
-button {
-    background-color: #ff6600;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
+/* Estilo para el botón "Agregar Gasto" */
+#agregar-gasto {
+  background-color: #ff9800; /* Naranja */
+  color: #fff; /* Texto blanco */
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin: 10px 0;
 }
 
+/* Estilo para el botón "Crear Presupuesto" */
+#crear-presupuesto {
+  background-color: #ff9800; /* Naranja */
+  color: #fff; /* Texto blanco */
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin: 10px 0;
+}
+
+/* Estilo para el pie de página */
 footer {
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    padding: 10px 0;
+  background-color: #333; /* Fondo gris oscuro */
+  color: #fff; /* Texto blanco */
+  text-align: center;
+  padding: 10px;
 }
 
-/* Estilos generales para el cuerpo de la página */
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-}
-
-/* Estilos para los encabezados */
-h2 {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-/* Estilos para los mensajes de alerta */
-.alert {
-    background-color: #f44336;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-}
-
-
-
-
-/* Estilo para el barra de progreso y porcentaje */
-#barraProgreso {
+/* Estilo para los campos de entrada de texto y número */
+input[type="text"],
+input[type="number"] {
   width: 100%;
-  height: 20px; /* Ajusta la altura según tu preferencia */
-  background-color: #e0e0e0; /* Color de fondo de la barra */
-  border: 1px solid #ccc; /* Borde de la barra */
+  padding: 5px;
+  margin: 5px 0;
 }
 
-/* Estilo para el indicador de progreso (relleno) */
-#barraProgreso::-webkit-progress-value {
-  background-color: #ff6600; /* Cambia el color del indicador de progreso a naranja en navegadores webkit (como Chrome y Safari) */
+/* Estilo para los campos de entrada en Detalles del Presupuesto */
+.nombre-gasto,
+.valor-gasto {
+  border: 1px solid #ccc; /* Borde gris claro */
+  padding: 5px;
+  margin: 5px 0;
 }
 
-#barraProgreso::-moz-progress-bar {
-  background-color: #ff6600; /* Cambia el color del indicador de progreso a naranja en Firefox */
+/* Estilo para los botones */
+.btn {
+  padding: 10px 20px;
+  cursor: pointer;
+  margin: 10px 5px;
 }
 
-/* Estilo para el texto dentro de la barra de progreso */
-#barraProgreso::-webkit-progress-value::after {
-  content: attr(value) '%'; /* Muestra el valor del progreso como texto */
-  position: absolute;
-  right: 10px; /* Alinea el texto a la derecha */
-  color: #fff; /* Color del texto */
+.btn-primary {
+  background-color: #ff9800; /* Naranja */
+  color: #fff; /* Texto blanco */
+}
+
+.btn-success {
+  background-color: #4CAF50; /* Verde */
+  color: #fff; /* Texto blanco */
+}
+
+.btn-danger {
+  background-color: #f44336; /* Rojo */
+  color: #fff; /* Texto blanco */
+}
+
+/* Estilo para el selector de presupuestos */
+#selector-presupuestos {
+  width: 100%;
+  padding: 5px;
+  margin: 5px 0;
+}
+
+/* Estilo para el mensaje de estado del presupuesto */
+#estado-presupuesto {
+  margin: 10px 0;
   font-weight: bold;
-}
-
-/* Estilo para el porcentaje de texto */
-#porcentajeTexto {
-  display: inline-block;
-  margin-left: 10px; /* Espacio entre la barra de progreso y el texto */
-  color: #333; /* Color del texto */
-  font-weight: bold;
-}
-
-/* Estilo para los elementos editables */
-span[contenteditable="true"] {
-  border: 1px solid #888; /* Borde sólido gris */
-  padding: 2px; /* Agrega un poco de espacio alrededor de los elementos editables */
-  cursor: pointer; /* Cambia el cursor al puntero cuando pasas por encima */
+  color: #333; /* Texto gris oscuro */
 }

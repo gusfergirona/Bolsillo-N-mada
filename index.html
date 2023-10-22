@@ -4,54 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bolsillo Nómada</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="./styles/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.17/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</head>
 </head>
 <body>
-    <header>
-        <h1>Bolsillo Nómada</h1>
+    <header class="bg-light">
+        <h1 class="text-center">Bolsillo Nómada</h1>
     </header>
     
-    <h1>Calculadora de Viaje</h1>
-	
-	<form id="formulario-presupuesto">
-        <label for="nombre-presupuesto">Nombre del Presupuesto:</label>
-        <input type="text" id="nombre-presupuesto" required>
+    <h1 class="display-4 text-center">Calculadora de Viaje</h1>
+    
+    <form id="formulario-presupuesto" class="container mt-4">
+        <div class="form-group">
+            <label for="nombre-presupuesto">Nombre del Presupuesto:</label>
+            <input type="text" id="nombre-presupuesto" class="form-control" required>
+        </div>
 
         <div id="gastos-container">
             <h2>Gastos</h2>
             <div class="gasto">
                 <label for="nombre-gasto-1">Nombre del Gasto:</label>
-                <input type="text" id="nombre-gasto-1" required>
+                <input type="text" id="nombre-gasto-1" class="form-control" required>
                 <label for="valor-gasto-1">Valor del Gasto:</label>
-                <input type="number" id="valor-gasto-1" required>
+                <input type="number" id="valor-gasto-1" class="form-control" required>
             </div>
         </div>
 
-        <button type="button" id="agregar-gasto">Agregar Gasto</button>
-        <br>
+        <button type="button" id="agregar-gasto" class="btn btn-warning">Agregar Gasto</button>
 
-        <label for="total-presupuesto">Presupuesto Total:</label>
-        <input type="number" id="total-presupuesto" required>
-        <br>
+        <div class="form-group">
+            <label for="total-presupuesto">Presupuesto Total:</label>
+            <input type="number" id="total-presupuesto" class="form-control" required>
+        </div>
 
-        <button id="crear-presupuesto">Crear Presupuesto</button>
+        <button id="crear-presupuesto" class="btn btn-primary">Crear Presupuesto</button>
     </form>
 
-    <h2>Seleccionar un Presupuesto:</h2>
-    <select id="selector-presupuestos">
+    <h2 class="text-center mt-4">Seleccionar un Presupuesto:</h2>
+    <select id="selector-presupuestos" class="form-control">
         <!-- Opciones de presupuestos se agregan aquí mediante JavaScript -->
     </select>
 
-    <h2>Detalles del Presupuesto:</h2>
+    <h2 class="text-center mt-4">Detalles del Presupuesto:</h2>
     <div id="detalles-presupuesto">
         <!-- La información del presupuesto se mostrará aquí mediante JavaScript -->
-		<button id="guardar-modificacion">Guardar Modificación</button>
+    </div>
+
+    <p id="estado-presupuesto" class="text-center"></p>
+
+    <button id="mostrar-destinos" class="btn btn-primary">Posibles Destinos</button>
+    <div id="lista-destinos">
+        <div class="container">
+            <div class="row" id="destinos-container"></div>
+        </div>
     </div>
     
-    <footer>
+    <footer class="bg-dark text-white text-center">
         <p>&copy; 2023 Bolsillo Nómada.</p>
     </footer>
     
     <script src="./script.js"></script>
 </body>
 </html>
+
